@@ -58,7 +58,7 @@ server {
             return 204;
         }
 
-        proxy_pass http://127.0.0.1:3001;
+        proxy_pass http://127.0.0.1:3002;
     }
 }
 EOL

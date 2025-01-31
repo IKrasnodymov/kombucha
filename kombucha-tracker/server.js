@@ -350,7 +350,7 @@ db.serialize(() => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
 // Start HTTP server
 app.listen(PORT, () => {
