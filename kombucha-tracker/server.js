@@ -4,7 +4,15 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
-app.use(cors());
+
+// CORS configuration
+const corsOptions = {
+    origin: ['http://localhost:3000', 'https://ikrasnodymov.github.io'],
+    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type']
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 const db = new sqlite3.Database(':memory:');
@@ -334,6 +342,10 @@ db.serialize(() => {
     });
 });
 
-app.listen(3001, () => {
-    console.log('Server running on port 3001');
+// Use environment variable for port or default to 3001
+const PORT = process.env.PORT || 3001;
+
+// Start the server
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is running on port ${PORT}`);
 });
