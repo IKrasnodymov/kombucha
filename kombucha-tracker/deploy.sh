@@ -10,12 +10,14 @@ apt install -y nodejs
 cat > /etc/nginx/sites-available/kombucha << 'EOL'
 server {
     listen 80;
+    listen [::]:80;
     server_name 165.232.124.244;
     return 301 https://$server_name$request_uri;
 }
 
 server {
     listen 443 ssl;
+    listen [::]:443 ssl;
     server_name 165.232.124.244;
 
     ssl_certificate /etc/nginx/ssl/nginx.crt;
@@ -29,35 +31,41 @@ server {
     ssl_session_cache shared:SSL:10m;
     ssl_session_tickets off;
 
+    # Proxy settings
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_cache_bypass $http_upgrade;
+
+    # CORS headers
+    add_header 'Access-Control-Allow-Origin' 'https://ikrasnodymov.github.io' always;
+    add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, DELETE' always;
+    add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization' always;
+    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
+
     location / {
-        proxy_pass http://localhost:3001;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-        
-        # CORS headers
-        add_header 'Access-Control-Allow-Origin' 'https://ikrasnodymov.github.io' always;
-        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, DELETE' always;
-        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range' always;
-        add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
-        
         if ($request_method = 'OPTIONS') {
             add_header 'Access-Control-Allow-Origin' 'https://ikrasnodymov.github.io' always;
             add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, DELETE' always;
-            add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range' always;
+            add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization' always;
             add_header 'Access-Control-Max-Age' 1728000;
-            add_header 'Content-Type' 'text/plain; charset=utf-8';
+            add_header 'Content-Type' 'text/plain charset=UTF-8';
             add_header 'Content-Length' 0;
             return 204;
         }
+
+        proxy_pass http://127.0.0.1:3001;
     }
 }
 EOL
 
 # Create symbolic link if it doesn't exist
 ln -sf /etc/nginx/sites-available/kombucha /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
 nginx -t && systemctl restart nginx
 
 # Get SSL certificate
