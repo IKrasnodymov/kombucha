@@ -10,16 +10,7 @@ apt install -y nodejs
 cat > /etc/nginx/sites-available/kombucha << 'EOL'
 server {
     listen 80;
-    server_name kombucha.ikrasnodymov.com;
-    return 301 https://$server_name$request_uri;
-}
-
-server {
-    listen 443 ssl;
-    server_name kombucha.ikrasnodymov.com;
-
-    ssl_certificate /etc/letsencrypt/live/kombucha.ikrasnodymov.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/kombucha.ikrasnodymov.com/privkey.pem;
+    server_name 165.232.124.244;
 
     location / {
         proxy_pass http://localhost:3001;
@@ -32,7 +23,7 @@ server {
 }
 EOL
 
-# Enable the site
+# Create symbolic link if it doesn't exist
 ln -sf /etc/nginx/sites-available/kombucha /etc/nginx/sites-enabled/
 nginx -t && systemctl restart nginx
 
