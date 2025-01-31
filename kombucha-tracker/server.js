@@ -349,16 +349,15 @@ db.serialize(() => {
     });
 });
 
-// Use environment variable for port or default to 3001
+// Start the server
 const PORT = process.env.PORT || 3001;
-const HTTPS_PORT = process.env.HTTPS_PORT || 3443;
 
-// Start HTTP server (for Let's Encrypt verification)
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`HTTP Server is running on port ${PORT}`);
+// Start HTTP server
+app.listen(PORT, () => {
+    console.log(`HTTP Server running on port ${PORT}`);
 });
 
-// Start HTTPS server if certificates exist
+// If SSL certificates exist, also start HTTPS server
 const sslPath = '/etc/letsencrypt/live/kombucha.ikrasnodymov.com';
 if (fs.existsSync(sslPath)) {
     const privateKey = fs.readFileSync(`${sslPath}/privkey.pem`, 'utf8');
@@ -372,7 +371,7 @@ if (fs.existsSync(sslPath)) {
     };
 
     const httpsServer = https.createServer(credentials, app);
-    httpsServer.listen(HTTPS_PORT, () => {
-        console.log(`HTTPS Server is running on port ${HTTPS_PORT}`);
+    httpsServer.listen(443, () => {
+        console.log('HTTPS Server running on port 443');
     });
 }
