@@ -2,6 +2,7 @@ const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 
@@ -15,7 +16,36 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-const db = new sqlite3.Database(':memory:');
+// Use file-based database instead of memory
+const dbPath = path.join(__dirname, 'kombucha.db');
+const db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+        console.error('Error opening database:', err);
+    } else {
+        console.log('Connected to the SQLite database.');
+        // Create tables if they don't exist
+        db.run(`CREATE TABLE IF NOT EXISTS kombucha_jars (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            volume REAL,
+            sugar_spoons INTEGER,
+            tea_type TEXT,
+            additives TEXT,
+            start_date TEXT,
+            last_refresh_date TEXT,
+            updates TEXT,
+            organic_acids REAL,
+            vitamin_c REAL,
+            vitamin_b1 REAL,
+            vitamin_b2 REAL,
+            probiotics REAL,
+            sweetness_level REAL,
+            carbonation REAL,
+            ph REAL,
+            alcohol REAL
+        )`);
+    }
+});
 
 // Функция для расчета текущих значений банки
 const calculateCurrentValues = (jar) => {
@@ -73,31 +103,6 @@ const calculateCurrentValues = (jar) => {
 };
 
 db.serialize(() => {
-    // Удаляем существующую таблицу, если она есть
-    db.run("DROP TABLE IF EXISTS kombucha_jars");
-    
-    // Создаем таблицу с новой схемой
-    db.run(`CREATE TABLE kombucha_jars (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        volume REAL,
-        sugar_spoons INTEGER,
-        tea_type TEXT,
-        additives TEXT,
-        start_date TEXT,
-        last_refresh_date TEXT,
-        updates TEXT,
-        organic_acids REAL,
-        vitamin_c REAL,
-        vitamin_b1 REAL,
-        vitamin_b2 REAL,
-        probiotics REAL,
-        sweetness_level REAL,
-        carbonation REAL,
-        ph REAL,
-        alcohol REAL
-    )`);
-
     // Добавляем тестовую банку
     const stmt = db.prepare(`
         INSERT INTO kombucha_jars (
