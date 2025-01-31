@@ -2,9 +2,33 @@
 
 # Update system and install Node.js
 apt update
-apt install -y curl
+apt install -y curl certbot nginx
 curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 apt install -y nodejs
+
+# Configure Nginx
+cat > /etc/nginx/sites-available/kombucha << 'EOL'
+server {
+    listen 80;
+    server_name kombucha.ikrasnodymov.com;
+
+    location / {
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+EOL
+
+# Enable the site
+ln -sf /etc/nginx/sites-available/kombucha /etc/nginx/sites-enabled/
+nginx -t && systemctl restart nginx
+
+# Get SSL certificate
+certbot --nginx -d kombucha.ikrasnodymov.com --non-interactive --agree-tos -m ikrasnodymov@gmail.com
 
 # Create project directory
 mkdir -p /root/kombucha

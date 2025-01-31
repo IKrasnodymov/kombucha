@@ -3,6 +3,8 @@ const sqlite3 = require('sqlite3').verbose();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
+const https = require('https');
 
 const app = express();
 
@@ -349,8 +351,28 @@ db.serialize(() => {
 
 // Use environment variable for port or default to 3001
 const PORT = process.env.PORT || 3001;
+const HTTPS_PORT = process.env.HTTPS_PORT || 3443;
 
-// Start the server
+// Start HTTP server (for Let's Encrypt verification)
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`HTTP Server is running on port ${PORT}`);
 });
+
+// Start HTTPS server if certificates exist
+const sslPath = '/etc/letsencrypt/live/kombucha.ikrasnodymov.com';
+if (fs.existsSync(sslPath)) {
+    const privateKey = fs.readFileSync(`${sslPath}/privkey.pem`, 'utf8');
+    const certificate = fs.readFileSync(`${sslPath}/cert.pem`, 'utf8');
+    const ca = fs.readFileSync(`${sslPath}/chain.pem`, 'utf8');
+
+    const credentials = {
+        key: privateKey,
+        cert: certificate,
+        ca: ca
+    };
+
+    const httpsServer = https.createServer(credentials, app);
+    httpsServer.listen(HTTPS_PORT, () => {
+        console.log(`HTTPS Server is running on port ${HTTPS_PORT}`);
+    });
+}
