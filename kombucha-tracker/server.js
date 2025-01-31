@@ -10,7 +10,7 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-    origin: ['http://localhost:3000', 'https://ikrasnodymov.github.io'],
+    origin: ['http://localhost:3000', 'https://ikrasnodymov.github.io', 'http://ikrasnodymov.github.io'],
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type']
 };
