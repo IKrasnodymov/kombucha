@@ -15,7 +15,7 @@ import config from './config';
 function App() {
     const [jars, setJars] = useState([]);
     const [newJar, setNewJar] = useState({ name: '', volume: '', sugar_spoons: '', tea_type: '', additives: '' });
-    const [selectedJar, setSelectedJar] = useState(null);
+    const [expandedJar, setExpandedJar] = useState(null);
     const [refreshDialogOpen, setRefreshDialogOpen] = useState(false);
     const [jarToRefresh, setJarToRefresh] = useState(null);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -33,12 +33,6 @@ function App() {
         try {
             const response = await axios.get(`${config.apiUrl}/jars`);
             setJars(response.data);
-            if (selectedJar) {
-                const updatedSelectedJar = response.data.find(jar => jar.id === selectedJar.id);
-                if (updatedSelectedJar) {
-                    setSelectedJar(updatedSelectedJar);
-                }
-            }
         } catch (error) {
             console.error(error);
         }
@@ -65,9 +59,6 @@ function App() {
             await axios.delete(`${config.apiUrl}/jars/${jarToDelete}`);
             setDeleteDialogOpen(false);
             setJarToDelete(null);
-            if (selectedJar && selectedJar.id === jarToDelete) {
-                setSelectedJar(null);
-            }
             fetchJars();
         } catch (error) {
             console.error(error);
@@ -92,7 +83,7 @@ function App() {
     };
 
     const handleJarClick = (jar) => {
-        setSelectedJar(jar);
+        setExpandedJar(expandedJar === jar.id ? null : jar.id);
     };
 
     const calculateChartData = (jar) => {
@@ -409,41 +400,33 @@ function App() {
                                                 </IconButton>
                                             </Box>
                                         </Box>
+                                        {expandedJar === jar.id && (
+                                            <Box sx={{ 
+                                                width: '100%', 
+                                                height: isMobile ? '300px' : '400px',
+                                                mt: 2
+                                            }}>
+                                                <Chart
+                                                    options={{
+                                                        ...calculateChartData(jar).options,
+                                                        chart: {
+                                                            ...calculateChartData(jar).options.chart,
+                                                            toolbar: {
+                                                                show: !isMobile
+                                                            }
+                                                        }
+                                                    }}
+                                                    series={calculateChartData(jar).series}
+                                                    height="100%"
+                                                />
+                                            </Box>
+                                        )}
                                     </CardContent>
                                 </Card>
                             ))}
                         </List>
                     </Paper>
                 </Grid>
-
-                {/* График для выбранной банки */}
-                {selectedJar && (
-                    <Grid item xs={12}>
-                        <Paper elevation={3} sx={{ p: 2 }}>
-                            <Typography variant="h6" gutterBottom>
-                                {selectedJar.name} - График ферментации
-                            </Typography>
-                            <Box sx={{ 
-                                width: '100%', 
-                                height: isMobile ? '300px' : '400px'
-                            }}>
-                                <Chart
-                                    options={{
-                                        ...calculateChartData(selectedJar).options,
-                                        chart: {
-                                            ...calculateChartData(selectedJar).options.chart,
-                                            toolbar: {
-                                                show: !isMobile
-                                            }
-                                        }
-                                    }}
-                                    series={calculateChartData(selectedJar).series}
-                                    height="100%"
-                                />
-                            </Box>
-                        </Paper>
-                    </Grid>
-                )}
             </Grid>
 
             {/* Диалоги */}
