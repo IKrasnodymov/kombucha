@@ -121,7 +121,20 @@ function App() {
                 carbonation: update.measurements?.carbonation || 0,
                 ph: update.measurements?.ph || 4.5,
                 alcohol: update.measurements?.alcohol || 0
-            }))
+            })),
+            // Добавляем текущие значения в конец массива
+            {
+                date: new Date().toISOString(),
+                organic_acids: jar.organic_acids || 0,
+                vitamin_c: jar.vitamin_c || 0,
+                vitamin_b1: jar.vitamin_b1 || 0,
+                vitamin_b2: jar.vitamin_b2 || 0,
+                probiotics: jar.probiotics || 0,
+                sweetness_level: jar.sweetness_level || 0,
+                carbonation: jar.carbonation || 0,
+                ph: jar.ph || 4.5,
+                alcohol: jar.alcohol || 0
+            }
         ];
 
         return {
@@ -377,16 +390,20 @@ function App() {
                                                     </Grid>
                                                 </Grid>
                                             </Box>
-                                            <Box>
+                                            <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
                                                 <IconButton
-                                                    size="small"
                                                     onClick={(e) => handleRefreshClick(e, jar.id)}
+                                                    size="small"
+                                                    aria-label={`Обновить банку ${jar.name}`}
                                                 >
                                                     <RefreshIcon />
                                                 </IconButton>
                                                 <IconButton
-                                                    size="small"
                                                     onClick={(e) => handleDeleteClick(e, jar.id)}
+                                                    size="small"
+                                                    color="default"
+                                                    aria-label={`Удалить банку ${jar.name}`}
+                                                    sx={{ color: 'text.secondary' }}
                                                 >
                                                     <DeleteIcon />
                                                 </IconButton>
@@ -430,30 +447,40 @@ function App() {
             </Grid>
 
             {/* Диалоги */}
-            <Dialog open={refreshDialogOpen} onClose={() => setRefreshDialogOpen(false)}>
-                <DialogTitle>Подтверждение обновления</DialogTitle>
+            <Dialog 
+                open={refreshDialogOpen} 
+                onClose={() => setRefreshDialogOpen(false)}
+                aria-labelledby="refresh-dialog-title"
+                aria-describedby="refresh-dialog-description"
+            >
+                <DialogTitle id="refresh-dialog-title">Подтверждение обновления</DialogTitle>
                 <DialogContent>
-                    <Typography>
+                    <Typography id="refresh-dialog-description">
                         Вы уверены, что хотите обновить банку? 
                         Это действие обнулит текущие показатели, но сохранит историю изменений.
                     </Typography>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setRefreshDialogOpen(false)}>Отмена</Button>
+                    <Button onClick={() => setRefreshDialogOpen(false)} autoFocus>Отмена</Button>
                     <Button onClick={refreshJar} color="primary">Обновить</Button>
                 </DialogActions>
             </Dialog>
 
-            <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-                <DialogTitle>Подтверждение удаления</DialogTitle>
+            <Dialog 
+                open={deleteDialogOpen} 
+                onClose={() => setDeleteDialogOpen(false)}
+                aria-labelledby="delete-dialog-title"
+                aria-describedby="delete-dialog-description"
+            >
+                <DialogTitle id="delete-dialog-title">Подтверждение удаления</DialogTitle>
                 <DialogContent>
-                    <Typography>
+                    <Typography id="delete-dialog-description">
                         Вы уверены, что хотите удалить эту банку? 
                         Это действие нельзя будет отменить.
                     </Typography>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setDeleteDialogOpen(false)}>Отмена</Button>
+                    <Button onClick={() => setDeleteDialogOpen(false)} autoFocus>Отмена</Button>
                     <Button onClick={deleteJar} color="error">Удалить</Button>
                 </DialogActions>
             </Dialog>

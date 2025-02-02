@@ -1,32 +1,24 @@
 {
-<<<<<<< HEAD
-  "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
-    "@mui/material": "^6.4.2",
-    "axios": "^1.7.9",
-    "body-parser": "^1.20.3",
-    "cors": "^2.8.5",
-    "express": "^4.21.2",
-    "sqlite3": "^5.1.7"
-=======
   "name": "kombucha-frontend",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://ikrasnodymov.github.io/kombucha",
+  "homepage": "/kombucha",
+  "proxy": "https://165.232.124.244",
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^5.16.14",
-    "@mui/material": "^5.16.14",
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.6",
+    "@mui/material": "^5.15.6",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "apexcharts": "^4.4.0",
-    "react": "^18.3.1",
-    "react-apexcharts": "^1.7.0",
-    "react-dom": "^18.3.1",
-    "react-scripts": "^5.0.1",
+    "axios": "^1.6.7",
+    "gh-pages": "^6.3.0",
+    "http-proxy-middleware": "^3.0.3",
+    "react": "^18.2.0",
+    "react-apexcharts": "^1.4.1",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -54,9 +46,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "gh-pages": "^6.3.0"
->>>>>>> 064d598 (Initial commit with HTTPS API URL)
   }
 }
