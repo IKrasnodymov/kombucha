@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/kombucha/static/js/main.b1d1c70a.js",
+    "main.js": "/kombucha/static/js/main.7c32c4d3.js",
     "index.html": "/kombucha/index.html",
-    "main.b1d1c70a.js.map": "/kombucha/static/js/main.b1d1c70a.js.map"
+    "main.7c32c4d3.js.map": "/kombucha/static/js/main.7c32c4d3.js.map"
   },
   "entrypoints": [
-    "static/js/main.b1d1c70a.js"
+    "static/js/main.7c32c4d3.js"
   ]
 }
